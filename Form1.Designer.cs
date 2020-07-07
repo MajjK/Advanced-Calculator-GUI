@@ -40,7 +40,7 @@ namespace Projekt3
             this.buttonDot = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonSub = new System.Windows.Forms.Button();
-            this.buttonMnoz = new System.Windows.Forms.Button();
+            this.buttonMult = new System.Windows.Forms.Button();
             this.buttonDiv = new System.Windows.Forms.Button();
             this.buttonMod = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
@@ -75,7 +75,7 @@ namespace Projekt3
             this.button0.TabIndex = 1;
             this.button0.Text = "0";
             this.button0.UseVisualStyleBackColor = true;
-            this.button0.Click += new System.EventHandler(this.btnWasClicked);
+            this.button0.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button2
             // 
@@ -86,7 +86,7 @@ namespace Projekt3
             this.button2.TabIndex = 2;
             this.button2.Text = "2";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.btnWasClicked);
+            this.button2.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button1
             // 
@@ -97,7 +97,7 @@ namespace Projekt3
             this.button1.TabIndex = 3;
             this.button1.Text = "1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnWasClicked);
+            this.button1.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button3
             // 
@@ -108,7 +108,7 @@ namespace Projekt3
             this.button3.TabIndex = 4;
             this.button3.Text = "3";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.btnWasClicked);
+            this.button3.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button5
             // 
@@ -119,7 +119,7 @@ namespace Projekt3
             this.button5.TabIndex = 5;
             this.button5.Text = "5";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.btnWasClicked);
+            this.button5.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button6
             // 
@@ -130,7 +130,7 @@ namespace Projekt3
             this.button6.TabIndex = 6;
             this.button6.Text = "6";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.btnWasClicked);
+            this.button6.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button7
             // 
@@ -141,7 +141,7 @@ namespace Projekt3
             this.button7.TabIndex = 7;
             this.button7.Text = "7";
             this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.btnWasClicked);
+            this.button7.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button8
             // 
@@ -152,7 +152,7 @@ namespace Projekt3
             this.button8.TabIndex = 8;
             this.button8.Text = "8";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.btnWasClicked);
+            this.button8.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button9
             // 
@@ -163,7 +163,7 @@ namespace Projekt3
             this.button9.TabIndex = 9;
             this.button9.Text = "9";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.btnWasClicked);
+            this.button9.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // button4
             // 
@@ -174,7 +174,7 @@ namespace Projekt3
             this.button4.TabIndex = 10;
             this.button4.Text = "4";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.btnWasClicked);
+            this.button4.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonDot
             // 
@@ -185,7 +185,7 @@ namespace Projekt3
             this.buttonDot.TabIndex = 11;
             this.buttonDot.Text = ".";
             this.buttonDot.UseVisualStyleBackColor = true;
-            this.buttonDot.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonDot.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonAdd
             // 
@@ -196,7 +196,7 @@ namespace Projekt3
             this.buttonAdd.TabIndex = 13;
             this.buttonAdd.Text = "+";
             this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonAdd.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonSub
             // 
@@ -207,18 +207,18 @@ namespace Projekt3
             this.buttonSub.TabIndex = 14;
             this.buttonSub.Text = "-";
             this.buttonSub.UseVisualStyleBackColor = true;
-            this.buttonSub.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonSub.Click += new System.EventHandler(this.BtnWasClicked);
             // 
-            // buttonMnoz
+            // buttonMult
             // 
-            this.buttonMnoz.Location = new System.Drawing.Point(112, 226);
-            this.buttonMnoz.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonMnoz.Name = "buttonMnoz";
-            this.buttonMnoz.Size = new System.Drawing.Size(75, 33);
-            this.buttonMnoz.TabIndex = 15;
-            this.buttonMnoz.Text = "*";
-            this.buttonMnoz.UseVisualStyleBackColor = true;
-            this.buttonMnoz.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonMult.Location = new System.Drawing.Point(112, 226);
+            this.buttonMult.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonMult.Name = "buttonMult";
+            this.buttonMult.Size = new System.Drawing.Size(75, 33);
+            this.buttonMult.TabIndex = 15;
+            this.buttonMult.Text = "*";
+            this.buttonMult.UseVisualStyleBackColor = true;
+            this.buttonMult.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonDiv
             // 
@@ -229,7 +229,7 @@ namespace Projekt3
             this.buttonDiv.TabIndex = 16;
             this.buttonDiv.Text = "/";
             this.buttonDiv.UseVisualStyleBackColor = true;
-            this.buttonDiv.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonDiv.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonMod
             // 
@@ -240,7 +240,7 @@ namespace Projekt3
             this.buttonMod.TabIndex = 17;
             this.buttonMod.Text = "%";
             this.buttonMod.UseVisualStyleBackColor = true;
-            this.buttonMod.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonMod.Click += new System.EventHandler(this.BtnWasClicked);
             // 
             // buttonClear
             // 
@@ -268,7 +268,7 @@ namespace Projekt3
             // 
             this.timer1.Enabled = true;
             this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // labelTimer
             // 
@@ -349,7 +349,7 @@ namespace Projekt3
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonMod);
             this.Controls.Add(this.buttonDiv);
-            this.Controls.Add(this.buttonMnoz);
+            this.Controls.Add(this.buttonMult);
             this.Controls.Add(this.buttonSub);
             this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.buttonDot);
@@ -391,7 +391,7 @@ namespace Projekt3
         private System.Windows.Forms.Button buttonDot;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonSub;
-        private System.Windows.Forms.Button buttonMnoz;
+        private System.Windows.Forms.Button buttonMult;
         private System.Windows.Forms.Button buttonDiv;
         private System.Windows.Forms.Button buttonMod;
         private System.Windows.Forms.Button buttonClear;
