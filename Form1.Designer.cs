@@ -1,14 +1,13 @@
-﻿namespace Projekt3
+namespace Projekt3
 {
     partial class Form1
     {
         /// <summary>
-        /// Wymagana zmienna projektanta.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Wyczyść wszystkie używane zasoby.
+
         /// </summary>
         /// <param name="disposing">prawda, jeżeli zarządzane zasoby powinny zostać zlikwidowane; Fałsz w przeciwnym wypadku.</param>
         protected override void Dispose(bool disposing)
@@ -23,8 +22,6 @@
         #region Kod generowany przez Projektanta formularzy systemu Windows
 
         /// <summary>
-        /// Metoda wymagana do obsługi projektanta — nie należy modyfikować
-        /// jej zawartości w edytorze kodu.
         /// </summary>
         private void InitializeComponent()
         {
@@ -40,14 +37,14 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.buttonKropka = new System.Windows.Forms.Button();
-            this.buttonDodaj = new System.Windows.Forms.Button();
-            this.buttonMin = new System.Windows.Forms.Button();
+            this.buttonDot = new System.Windows.Forms.Button();
+            this.buttonAdd = new System.Windows.Forms.Button();
+            this.buttonSub = new System.Windows.Forms.Button();
             this.buttonMnoz = new System.Windows.Forms.Button();
-            this.buttonDziel = new System.Windows.Forms.Button();
+            this.buttonDiv = new System.Windows.Forms.Button();
             this.buttonMod = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.buttonLicz = new System.Windows.Forms.Button();
+            this.buttonCalc = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.labelTimer = new System.Windows.Forms.Label();
             this.pictureBoxClock = new System.Windows.Forms.PictureBox();
@@ -179,38 +176,38 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.btnWasClicked);
             // 
-            // buttonKropka
+            // buttonDot
             // 
-            this.buttonKropka.Location = new System.Drawing.Point(21, 405);
-            this.buttonKropka.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonKropka.Name = "buttonKropka";
-            this.buttonKropka.Size = new System.Drawing.Size(75, 33);
-            this.buttonKropka.TabIndex = 11;
-            this.buttonKropka.Text = ".";
-            this.buttonKropka.UseVisualStyleBackColor = true;
-            this.buttonKropka.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonDot.Location = new System.Drawing.Point(21, 405);
+            this.buttonDot.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonDot.Name = "buttonDot";
+            this.buttonDot.Size = new System.Drawing.Size(75, 33);
+            this.buttonDot.TabIndex = 11;
+            this.buttonDot.Text = ".";
+            this.buttonDot.UseVisualStyleBackColor = true;
+            this.buttonDot.Click += new System.EventHandler(this.btnWasClicked);
             // 
-            // buttonDodaj
+            // buttonAdd
             // 
-            this.buttonDodaj.Location = new System.Drawing.Point(293, 226);
-            this.buttonDodaj.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonDodaj.Name = "buttonDodaj";
-            this.buttonDodaj.Size = new System.Drawing.Size(75, 33);
-            this.buttonDodaj.TabIndex = 13;
-            this.buttonDodaj.Text = "+";
-            this.buttonDodaj.UseVisualStyleBackColor = true;
-            this.buttonDodaj.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonAdd.Location = new System.Drawing.Point(293, 226);
+            this.buttonAdd.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(75, 33);
+            this.buttonAdd.TabIndex = 13;
+            this.buttonAdd.Text = "+";
+            this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.btnWasClicked);
             // 
-            // buttonMin
+            // buttonSub
             // 
-            this.buttonMin.Location = new System.Drawing.Point(205, 226);
-            this.buttonMin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonMin.Name = "buttonMin";
-            this.buttonMin.Size = new System.Drawing.Size(75, 33);
-            this.buttonMin.TabIndex = 14;
-            this.buttonMin.Text = "-";
-            this.buttonMin.UseVisualStyleBackColor = true;
-            this.buttonMin.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonSub.Location = new System.Drawing.Point(205, 226);
+            this.buttonSub.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonSub.Name = "buttonSub";
+            this.buttonSub.Size = new System.Drawing.Size(75, 33);
+            this.buttonSub.TabIndex = 14;
+            this.buttonSub.Text = "-";
+            this.buttonSub.UseVisualStyleBackColor = true;
+            this.buttonSub.Click += new System.EventHandler(this.btnWasClicked);
             // 
             // buttonMnoz
             // 
@@ -223,16 +220,16 @@
             this.buttonMnoz.UseVisualStyleBackColor = true;
             this.buttonMnoz.Click += new System.EventHandler(this.btnWasClicked);
             // 
-            // buttonDziel
+            // buttonDiv
             // 
-            this.buttonDziel.Location = new System.Drawing.Point(21, 226);
-            this.buttonDziel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonDziel.Name = "buttonDziel";
-            this.buttonDziel.Size = new System.Drawing.Size(75, 33);
-            this.buttonDziel.TabIndex = 16;
-            this.buttonDziel.Text = "/";
-            this.buttonDziel.UseVisualStyleBackColor = true;
-            this.buttonDziel.Click += new System.EventHandler(this.btnWasClicked);
+            this.buttonDiv.Location = new System.Drawing.Point(21, 226);
+            this.buttonDiv.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonDiv.Name = "buttonDiv";
+            this.buttonDiv.Size = new System.Drawing.Size(75, 33);
+            this.buttonDiv.TabIndex = 16;
+            this.buttonDiv.Text = "/";
+            this.buttonDiv.UseVisualStyleBackColor = true;
+            this.buttonDiv.Click += new System.EventHandler(this.btnWasClicked);
             // 
             // buttonMod
             // 
@@ -256,16 +253,16 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.ClearClicked);
             // 
-            // buttonLicz
+            // buttonCalc
             // 
-            this.buttonLicz.Location = new System.Drawing.Point(293, 313);
-            this.buttonLicz.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.buttonLicz.Name = "buttonLicz";
-            this.buttonLicz.Size = new System.Drawing.Size(75, 33);
-            this.buttonLicz.TabIndex = 20;
-            this.buttonLicz.Text = "=";
-            this.buttonLicz.UseVisualStyleBackColor = true;
-            this.buttonLicz.Click += new System.EventHandler(this.buttonLicz_Click);
+            this.buttonCalc.Location = new System.Drawing.Point(293, 313);
+            this.buttonCalc.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.buttonCalc.Name = "buttonCalc";
+            this.buttonCalc.Size = new System.Drawing.Size(75, 33);
+            this.buttonCalc.TabIndex = 20;
+            this.buttonCalc.Text = "=";
+            this.buttonCalc.UseVisualStyleBackColor = true;
+            this.buttonCalc.Click += new System.EventHandler(this.buttonCalc_Click);
             // 
             // timer1
             // 
@@ -348,14 +345,14 @@
             this.Controls.Add(this.groupBoxAppStyle);
             this.Controls.Add(this.pictureBoxClock);
             this.Controls.Add(this.labelTimer);
-            this.Controls.Add(this.buttonLicz);
+            this.Controls.Add(this.buttonCalc);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonMod);
-            this.Controls.Add(this.buttonDziel);
+            this.Controls.Add(this.buttonDiv);
             this.Controls.Add(this.buttonMnoz);
-            this.Controls.Add(this.buttonMin);
-            this.Controls.Add(this.buttonDodaj);
-            this.Controls.Add(this.buttonKropka);
+            this.Controls.Add(this.buttonSub);
+            this.Controls.Add(this.buttonAdd);
+            this.Controls.Add(this.buttonDot);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.button8);
@@ -391,14 +388,14 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button buttonKropka;
-        private System.Windows.Forms.Button buttonDodaj;
-        private System.Windows.Forms.Button buttonMin;
+        private System.Windows.Forms.Button buttonDot;
+        private System.Windows.Forms.Button buttonAdd;
+        private System.Windows.Forms.Button buttonSub;
         private System.Windows.Forms.Button buttonMnoz;
-        private System.Windows.Forms.Button buttonDziel;
+        private System.Windows.Forms.Button buttonDiv;
         private System.Windows.Forms.Button buttonMod;
         private System.Windows.Forms.Button buttonClear;
-        private System.Windows.Forms.Button buttonLicz;
+        private System.Windows.Forms.Button buttonCalc;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label labelTimer;
         private System.Windows.Forms.PictureBox pictureBoxClock;
