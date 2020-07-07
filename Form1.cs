@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +14,6 @@ namespace Projekt3
     {
         int Clk_WIDTH = 100, Clk_HEIGHT = 100, secH = 45, minH = 35, hrH = 25;
         int center_x, center_y;
-
         Bitmap bmp;
         Graphics g;
 
@@ -49,7 +48,6 @@ namespace Projekt3
         public void ClearClicked(object sender, EventArgs e)
         {
             bool Deleted = false;
-
             while (MainTextBox.Text.Length > 0)
             {
                 string nextChar = MainTextBox.Text.Substring(MainTextBox.Text.Length - 1);
@@ -58,10 +56,8 @@ namespace Projekt3
                 {
                     if (Deleted)
                        break;
-                    
                     Deleted = true;
                 }
-
                 MainTextBox.Text = MainTextBox.Text.Substring(0, MainTextBox.Text.Length - 1);
             }
         }
@@ -69,7 +65,6 @@ namespace Projekt3
         public void PlusMinusClicked(object sender, EventArgs e)
         {
             bool Deleted = false;
-
             while (MainTextBox.Text.Length > 0)
             {
                 string nextChar = MainTextBox.Text.Substring(MainTextBox.Text.Length - 1);
@@ -78,7 +73,6 @@ namespace Projekt3
                 {
                     if (Deleted)
                         break;
-
                     Deleted = true;
                 }
 
@@ -86,7 +80,7 @@ namespace Projekt3
             }
         }
 
-        private void buttonLicz_Click(object sender, EventArgs e)
+        private void buttonCalc_Click(object sender, EventArgs e)
         {
             String input = MainTextBox.Text;
 
@@ -97,7 +91,7 @@ namespace Projekt3
             }
             catch (Exception error)
             {
-                MessageBox.Show("Błąd składniowy w poleceniu !");
+                MessageBox.Show("Syntax Error !");
             }
 
         }
@@ -137,32 +131,30 @@ namespace Projekt3
             else if (keyData == (Keys.NumPad9))
                 this.button9.PerformClick();
             else if (keyData == (Keys.Decimal))
-                this.buttonKropka.PerformClick();
-
+                this.buttonDot.PerformClick();
             else if (keyData == (Keys.Multiply))
                 this.buttonMnoz.PerformClick();
             else if (keyData == (Keys.Divide))
-                this.buttonDziel.PerformClick();
+                this.buttonDiv.PerformClick();
             else if (keyData == (Keys.Add))
-                this.buttonDodaj.PerformClick();
+                this.buttonAdd.PerformClick();
             else if (keyData == (Keys.Subtract))
-                this.buttonMin.PerformClick();
-
+                this.buttonSub.PerformClick();
             else if (keyData == (Keys.D5 | Keys.Shift))
                 this.buttonMod.PerformClick();
-
-
             else if (keyData == (Keys.Delete))
                 this.buttonClear.PerformClick();
             else if (keyData == (Keys.Enter))
-                this.buttonLicz.PerformClick();
-
+                this.buttonCalc.PerformClick();
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            int h = DateTime.Now.Hour;
+            int m = DateTime.Now.Minute;
+            int s = DateTime.Now.Second;
 
             if (comboBoxStyle.SelectedItem == "Default Style")
             {
@@ -184,13 +176,6 @@ namespace Projekt3
                     UpdateColorControls(c);
                 }
             }
-
-
-            int h = DateTime.Now.Hour;
-            int m = DateTime.Now.Minute;
-            int s = DateTime.Now.Second;
-
-
             if (comboBoxClock.SelectedItem == "Digital Clock")
             {
                 labelTimer.Visible = true;
@@ -201,14 +186,12 @@ namespace Projekt3
                     time += "0" + h;
                 else
                     time += h;
-
                 time += ":";
 
                 if (m < 10)
                     time += "0" + m;
                 else
                     time += m;
-
                 time += ":";
 
                 if (s < 10)
@@ -221,14 +204,13 @@ namespace Projekt3
 
             if (comboBoxClock.SelectedItem == "Analog Clock")
             {
-                pictureBoxClock.Visible = true;
-                labelTimer.Visible = false;
-                g = Graphics.FromImage(bmp);
-
-
                 int[] secCoord = new int[2];
                 int[] minCoord = new int[2];
                 int[] hourCoord = new int[2];
+
+                pictureBoxClock.Visible = true;
+                labelTimer.Visible = false;
+                g = Graphics.FromImage(bmp);
 
                 secCoord = msCoord(s, secH);
                 minCoord = msCoord(m, minH);
@@ -236,7 +218,7 @@ namespace Projekt3
 
                 g.Clear(this.BackColor);
                 g.DrawEllipse(new Pen(Color.Black, 1f), 0, 0, Clk_WIDTH, Clk_HEIGHT);
-
+          
                 g.DrawString("12", new Font("Arial", 12), Brushes.Black, new PointF(39, 2));
                 g.DrawString("3", new Font("Arial", 12), Brushes.Black, new PointF(86, 39));
                 g.DrawString("6", new Font("Arial", 12), Brushes.Black, new PointF(43, 80));
@@ -305,7 +287,6 @@ namespace Projekt3
         {
             int[] coord = new int[2];
             int Value = Convert.ToInt32(( H_Value*30 + M_Value/2 ));
-
 
             if (Value >= 0 && Value <= 180)
             {
