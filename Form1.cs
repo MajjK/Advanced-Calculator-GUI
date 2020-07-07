@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Projekt3
@@ -30,23 +25,25 @@ namespace Projekt3
             center_y = Clk_HEIGHT / 2;
         }
 
-        private void btnWasClicked(object sender, EventArgs e)
+        private void BtnWasClicked(object sender, EventArgs e)
         {
+            //Main function to process clicked buttons
             Button button = (Button)sender;
             string TextUpdate = button.Text;
 
             if (TextUpdate == "*" || TextUpdate == "/" || TextUpdate == "+" || TextUpdate == "-" || TextUpdate == "%")
             {
-                updateDisplay(" " + TextUpdate + " ");
+                UpdateDisplay(" " + TextUpdate + " ");
             }
             else
             {
-                updateDisplay(TextUpdate);
+                UpdateDisplay(TextUpdate);
             }
         }
 
         public void ClearClicked(object sender, EventArgs e)
         {
+            //Deleting last sign from textbox
             bool Deleted = false;
             while (MainTextBox.Text.Length > 0)
             {
@@ -62,26 +59,9 @@ namespace Projekt3
             }
         }
 
-        public void PlusMinusClicked(object sender, EventArgs e)
-        {
-            bool Deleted = false;
-            while (MainTextBox.Text.Length > 0)
-            {
-                string nextChar = MainTextBox.Text.Substring(MainTextBox.Text.Length - 1);
-
-                if (nextChar != " ")
-                {
-                    if (Deleted)
-                        break;
-                    Deleted = true;
-                }
-
-                MainTextBox.Text = MainTextBox.Text.Substring(0, MainTextBox.Text.Length - 1);
-            }
-        }
-
         private void buttonCalc_Click(object sender, EventArgs e)
         {
+            // Main function to compute operations from textbox
             String input = MainTextBox.Text;
 
             try
@@ -96,7 +76,7 @@ namespace Projekt3
 
         }
 
-        private void updateDisplay(string Update, Boolean replace = false)
+        private void UpdateDisplay(string Update, Boolean replace = false)
         {
             if (MainTextBox.Text == "0" || replace)
             {
@@ -110,6 +90,7 @@ namespace Projekt3
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Function which detects clicked button and process its function
             if (keyData == (Keys.NumPad0))
                 this.button0.PerformClick();
             else if (keyData == (Keys.NumPad1))
@@ -133,7 +114,7 @@ namespace Projekt3
             else if (keyData == (Keys.Decimal))
                 this.buttonDot.PerformClick();
             else if (keyData == (Keys.Multiply))
-                this.buttonMnoz.PerformClick();
+                this.buttonMult.PerformClick();
             else if (keyData == (Keys.Divide))
                 this.buttonDiv.PerformClick();
             else if (keyData == (Keys.Add))
@@ -150,8 +131,9 @@ namespace Projekt3
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
+            //Function to create and update clock
             int h = DateTime.Now.Hour;
             int m = DateTime.Now.Minute;
             int s = DateTime.Now.Second;
@@ -212,9 +194,9 @@ namespace Projekt3
                 labelTimer.Visible = false;
                 g = Graphics.FromImage(bmp);
 
-                secCoord = msCoord(s, secH);
-                minCoord = msCoord(m, minH);
-                hourCoord = hrCoord(h % 12, m, hrH);
+                secCoord = MsCoord(s, secH);
+                minCoord = MsCoord(m, minH);
+                hourCoord = HrCoord(h % 12, m, hrH);
 
                 g.Clear(this.BackColor);
                 g.DrawEllipse(new Pen(Color.Black, 1f), 0, 0, Clk_WIDTH, Clk_HEIGHT);
@@ -236,6 +218,7 @@ namespace Projekt3
 
         public void UpdateColorControls(Control myControl)
         {
+            //Function to change layout style
             if (myControl is Button)
             {
                 if (Projekt3.Properties.Settings.Default.Style == "Default")
@@ -265,8 +248,9 @@ namespace Projekt3
             }
         }
 
-        private int[] msCoord(int Value, int hlen)
+        private int[] MsCoord(int Value, int hlen)
         {
+            //Function which calculates minute/second hand of a clock coordinates
             int[] coord = new int[2];
             Value = Value * 6;  
 
@@ -283,8 +267,9 @@ namespace Projekt3
             return coord;
         }
 
-        private int[] hrCoord(int H_Value, int M_Value, int hlen)
+        private int[] HrCoord(int H_Value, int M_Value, int hlen)
         {
+            //Function which calculates hour hand of a clock coordinates
             int[] coord = new int[2];
             int Value = Convert.ToInt32(( H_Value*30 + M_Value/2 ));
 
