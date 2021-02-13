@@ -3,285 +3,365 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Projekt3
+namespace AdvancedCalculatorGUI
 {
-    public partial class Form1 : Form
+    // Dodanie Nawiasów
+    // Dodanie wpisywania niewiadomej X, tworzenia wykresu na określonym przedziale
+    // Całkowanie narysowanego przedziału
+
+    public partial class CalculatorGUI : Form
     {
-        int Clk_WIDTH = 100, Clk_HEIGHT = 100, secH = 45, minH = 35, hrH = 25;
-        int center_x, center_y;
-        Bitmap bmp;
-        Graphics g;
+        int clock_width = 100, clock_height = 100, center_x, center_y;
 
-
-        public Form1()
+        public CalculatorGUI()
         {
             InitializeComponent();
-
-            comboBoxStyle.SelectedIndex = 0;
-            comboBoxClock.SelectedIndex = 0;
-
-            bmp = new Bitmap(Clk_WIDTH + 1, Clk_HEIGHT + 1);
-            center_x = Clk_WIDTH / 2;
-            center_y = Clk_HEIGHT / 2;
+            styleComboBoxMenuStrip.SelectedItem = "Default Style";
+            clockComboBoxMenuStrip.SelectedItem = "Digital Clock";
+            center_x = clock_width / 2;
+            center_y = clock_height / 2;
         }
 
-        private void BtnWasClicked(object sender, EventArgs e)
+        private void ActionButtonClicked(object sender, EventArgs e)
         {
             //Main function to process clicked buttons
             Button button = (Button)sender;
-            string TextUpdate = button.Text;
-
-            if (TextUpdate == "*" || TextUpdate == "/" || TextUpdate == "+" || TextUpdate == "-" || TextUpdate == "%")
+            string text_update = button.Text;
+            
+            if (double.TryParse(text_update, out _) || text_update == ".")
             {
-                UpdateDisplay(" " + TextUpdate + " ");
+                UpdateDisplay(text_update);
             }
             else
-            {
-                UpdateDisplay(TextUpdate);
-            }
+                UpdateDisplay(" " + text_update + " ");     
         }
 
-        public void ClearClicked(object sender, EventArgs e)
+        private void UpdateDisplay(string update, Boolean replace = false)
+        {
+            if (mainTextBox.Text == "0" || replace)        
+                mainTextBox.Text = update;
+            
+            else
+                mainTextBox.Text += update;
+        }
+
+        private void BackButtonClicked(object sender, EventArgs e)
         {
             //Deleting last sign from textbox
-            bool Deleted = false;
-            while (MainTextBox.Text.Length > 0)
+            if (mainTextBox.Text.Length > 1)
             {
-                string nextChar = MainTextBox.Text.Substring(MainTextBox.Text.Length - 1);
+                string char_to_delete = mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1);
+                string prev_char = mainTextBox.Text.Substring(mainTextBox.Text.Length - 2, 1);
+                if (Char.IsLetter(prev_char, 0))
+                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 5);
+                else if (char_to_delete == " ")
+                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 3);
+                else
+                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 1);
 
-                if (nextChar != " ")
-                {
-                    if (Deleted)
-                       break;
-                    Deleted = true;
-                }
-                MainTextBox.Text = MainTextBox.Text.Substring(0, MainTextBox.Text.Length - 1);
             }
+            else if (mainTextBox.Text.Length == 1)
+                mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 1);
         }
 
-        private void buttonCalc_Click(object sender, EventArgs e)
+        private void ClearButtonClicked(object sender, EventArgs e)
+        {
+            mainTextBox.Text = "";
+        }
+
+        private void CalcButtonClicked(object sender, EventArgs e)
         {
             // Main function to compute operations from textbox
-            String input = MainTextBox.Text;
+            String input = mainTextBox.Text;
+            if (input.Contains("^"))
+                input = this.CalculateAdvancedMath(input, "^");
+            if (input.Contains("√"))
+                input = this.CalculateAdvancedMath(input, "√");
+            if (input.Contains("log"))
+                input = this.CalculateAdvancedMath(input, "log");
+            if (input.Contains("sin"))
+                input = this.CalculateAdvancedMath(input, "sin");
 
             try
             {
-                var something = new DataTable().Compute(input, null);
-                MainTextBox.Text = Convert.ToString(something);
+                //var operation = new DataTable().Compute(input, null);
+                this.UpdateDisplay(Convert.ToString(input), true);
             }
             catch (Exception error)
             {
                 MessageBox.Show("Syntax Error !");
             }
-
         }
 
-        private void UpdateDisplay(string Update, Boolean replace = false)
+        private string CalculateAdvancedMath(string equation, string operation)
         {
-            if (MainTextBox.Text == "0" || replace)
+            int operation_index = equation.IndexOf(operation);
+            double basis, operand, value = 0;
+         
+            while (operation_index != -1)
             {
-                MainTextBox.Text = Update;
+                basis = this.GetBasisValue(equation, operation_index - 2);
+                operand = this.GetOperandValue(equation, operation_index + 2);
+                if (operation == "^")
+                    value = Math.Round(Math.Pow(basis, operand), 5);
+                else if (operation == "√")
+                    value = Math.Round(Math.Sqrt(operand), 5);
+                else if (operation == "log" && basis == 0)
+                    value = Math.Round(Math.Log(operand), 5);
+                else if (operation == "log" && basis != 0)
+                    value = Math.Round(Math.Log(operand, basis), 5);
+                else if (operation == "sin")
+                    value = Math.Round(Math.Sin(operand), 5);
+
+                equation = equation.Remove(operation_index - 1 - basis.ToString().Length,
+                                           basis.ToString().Length + operand.ToString().Length + 3);
+                equation = equation.Insert(operation_index - 1 - basis.ToString().Length,
+                                           value.ToString() + " ");
+                operation_index = equation.IndexOf(operation);
             }
-            else
+            return equation;
+        }
+
+        private double GetBasisValue(string operation, int string_index)
+        {
+            int i = 0;
+            if (!double.TryParse(operation.Substring(string_index - i, 1), out _))
+                return 0;
+            while (true)
             {
-                MainTextBox.Text += Update;
+                if (string_index - i == 0 || operation.Substring(string_index - i, 1) == " ")
+                    return Double.Parse(operation.Substring(string_index - i, i + 1));
+                else
+                    i++;
+            }
+        }
+
+        private double GetOperandValue(string operation, int string_index)
+        {
+            int i = 0;
+            while (true)
+            {
+                if (string_index + i == operation.Length - 1 || operation.Substring(string_index + i, 1) == " ")
+                    return Double.Parse(operation.Substring(string_index, i + 1));
+                else
+                    i++;
             }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             // Function which detects clicked button and process its function
-            if (keyData == (Keys.NumPad0))
-                this.button0.PerformClick();
-            else if (keyData == (Keys.NumPad1))
-                this.button1.PerformClick();
-            else if (keyData == (Keys.NumPad2))
-                this.button2.PerformClick();
-            else if (keyData == (Keys.NumPad3))
-                this.button3.PerformClick();
-            else if (keyData == (Keys.NumPad4))
-                this.button4.PerformClick();
-            else if (keyData == (Keys.NumPad5))
-                this.button5.PerformClick();
-            else if (keyData == (Keys.NumPad6))
-                this.button6.PerformClick();
-            else if (keyData == (Keys.NumPad7))
-                this.button7.PerformClick();
-            else if (keyData == (Keys.NumPad8))
-                this.button8.PerformClick();
-            else if (keyData == (Keys.NumPad9))
-                this.button9.PerformClick();
-            else if (keyData == (Keys.Decimal))
-                this.buttonDot.PerformClick();
-            else if (keyData == (Keys.Multiply))
-                this.buttonMult.PerformClick();
-            else if (keyData == (Keys.Divide))
-                this.buttonDiv.PerformClick();
-            else if (keyData == (Keys.Add))
-                this.buttonAdd.PerformClick();
-            else if (keyData == (Keys.Subtract))
-                this.buttonSub.PerformClick();
-            else if (keyData == (Keys.D5 | Keys.Shift))
-                this.buttonMod.PerformClick();
-            else if (keyData == (Keys.Delete))
-                this.buttonClear.PerformClick();
-            else if (keyData == (Keys.Enter))
-                this.buttonCalc.PerformClick();
-
+            switch(keyData)
+            {
+                case Keys.NumPad0:
+                    this.button0.PerformClick();
+                    break;
+                case Keys.NumPad1:
+                    this.button1.PerformClick();
+                    break;
+                case Keys.NumPad2:
+                    this.button2.PerformClick();
+                    break;
+                case Keys.NumPad3:
+                    this.button3.PerformClick();
+                    break;
+                case Keys.NumPad4:
+                    this.button4.PerformClick();
+                    break;
+                case Keys.NumPad5:
+                    this.button5.PerformClick();
+                    break;
+                case Keys.NumPad6:
+                    this.button6.PerformClick();
+                    break;
+                case Keys.NumPad7:
+                    this.button7.PerformClick();
+                    break;
+                case Keys.NumPad8:
+                    this.button8.PerformClick();
+                    break;
+                case Keys.NumPad9:
+                    this.button9.PerformClick();
+                    break;
+                case Keys.Decimal:
+                    this.buttonDot.PerformClick();
+                    break;
+                case Keys.Multiply:
+                    this.buttonMult.PerformClick();
+                    break;
+                case Keys.Divide:
+                    this.buttonDiv.PerformClick();
+                    break;
+                case Keys.Add:
+                    this.buttonAdd.PerformClick();
+                    break;
+                case Keys.Subtract:
+                    this.buttonSub.PerformClick();
+                    break;
+                case Keys.D5 | Keys.Shift:
+                    this.buttonMod.PerformClick();
+                    break;
+                case Keys.Back:
+                    this.buttonBack.PerformClick();
+                    break;
+                case Keys.Delete:
+                    this.buttonClear.PerformClick();
+                    break;
+                case Keys.Enter:
+                    this.buttonCalc.PerformClick();
+                    break;
+                default:
+                    break;
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
             //Function to create and update clock
-            int h = DateTime.Now.Hour;
-            int m = DateTime.Now.Minute;
-            int s = DateTime.Now.Second;
-
-            if (comboBoxStyle.SelectedItem == "Default Style")
+            if ((string)styleComboBoxMenuStrip.SelectedItem == "Default Style")
             {
-                Projekt3.Properties.Settings.Default.Style = "Default";
-                this.BackColor = SystemColors.Control;
-                this.pictureBoxClock.BackColor = SystemColors.Control;
-                foreach (Control c in this.Controls)
-                {
-                    UpdateColorControls(c);
-                }
+                AdvancedCalculatorGUI.Properties.Settings.Default.Style = "Default";
+                this.SetStyle(SystemColors.Info, SystemColors.WindowText);
             }
-            if (comboBoxStyle.SelectedItem == "Dark Style")
+            if ((string)styleComboBoxMenuStrip.SelectedItem == "Dark Style")
             {
-                Projekt3.Properties.Settings.Default.Style = "Dark";
-                this.BackColor = SystemColors.ControlDarkDark;
-                this.pictureBoxClock.BackColor = SystemColors.ControlDarkDark;
-                foreach (Control c in this.Controls)
-                {
-                    UpdateColorControls(c);
-                }
+                AdvancedCalculatorGUI.Properties.Settings.Default.Style = "Dark";
+                this.SetStyle(System.Drawing.Color.FromArgb((int)((byte)(64)), (int)((byte)(64)), (int)(byte)(64)), SystemColors.MenuBar);
             }
-            if (comboBoxClock.SelectedItem == "Digital Clock")
-            {
-                labelTimer.Visible = true;
-                pictureBoxClock.Visible = false;
-                string time = "";
-
-                if (h < 10)
-                    time += "0" + h;
-                else
-                    time += h;
-                time += ":";
-
-                if (m < 10)
-                    time += "0" + m;
-                else
-                    time += m;
-                time += ":";
-
-                if (s < 10)
-                    time += "0" + s;
-                else
-                    time += s;
-
-                labelTimer.Text = time;
-            }
-
-            if (comboBoxClock.SelectedItem == "Analog Clock")
-            {
-                int[] secCoord = new int[2];
-                int[] minCoord = new int[2];
-                int[] hourCoord = new int[2];
-
-                pictureBoxClock.Visible = true;
-                labelTimer.Visible = false;
-                g = Graphics.FromImage(bmp);
-
-                secCoord = MsCoord(s, secH);
-                minCoord = MsCoord(m, minH);
-                hourCoord = HrCoord(h % 12, m, hrH);
-
-                g.Clear(this.BackColor);
-                g.DrawEllipse(new Pen(Color.Black, 1f), 0, 0, Clk_WIDTH, Clk_HEIGHT);
-          
-                g.DrawString("12", new Font("Arial", 12), Brushes.Black, new PointF(39, 2));
-                g.DrawString("3", new Font("Arial", 12), Brushes.Black, new PointF(86, 39));
-                g.DrawString("6", new Font("Arial", 12), Brushes.Black, new PointF(43, 80));
-                g.DrawString("9", new Font("Arial", 12), Brushes.Black, new PointF(0, 39));
-
-                g.DrawLine(new Pen(Color.Red, 1f), new Point(center_x, center_y), new Point(secCoord[0], secCoord[1]));
-                g.DrawLine(new Pen(Color.Gray, 2f), new Point(center_x, center_y), new Point(minCoord[0], minCoord[1]));
-                g.DrawLine(new Pen(Color.Black, 3f), new Point(center_x, center_y), new Point(hourCoord[0], hourCoord[1]));
-
-                pictureBoxClock.Image = bmp;
-                g.Dispose();
-            }
-
+            if ((string)clockComboBoxMenuStrip.SelectedItem == "Digital Clock")
+                this.SetDigitalClock();
+            if ((string)clockComboBoxMenuStrip.SelectedItem == "Analog Clock")
+                this.SetAnalogClock();
         }
 
-        public void UpdateColorControls(Control myControl)
+        private void SetStyle(Color back_color, Color fore_color)
         {
-            //Function to change layout style
-            if (myControl is Button)
+            this.BackColor = back_color;
+            this.pictureBoxClock.BackColor = back_color;
+            this.menuStrip.BackColor = back_color;
+            this.styleComboBoxMenuStrip.BackColor = back_color;
+            this.clockComboBoxMenuStrip.BackColor = back_color;
+            this.styleComboBoxMenuStrip.ForeColor = fore_color;
+            this.clockComboBoxMenuStrip.ForeColor = fore_color;
+            this.labelTimer.ForeColor = fore_color;
+            foreach (ToolStripMenuItem item in menuStrip.Items)
             {
-                if (Projekt3.Properties.Settings.Default.Style == "Default")
+                item.BackColor = back_color;
+                item.ForeColor = fore_color;
+                foreach (ToolStripMenuItem children in item.DropDownItems)
                 {
-                    myControl.BackColor = SystemColors.ControlLight;
-                }
-                else if (Projekt3.Properties.Settings.Default.Style == "Dark")
-                {
-                    myControl.BackColor = SystemColors.ControlDark;
+                    children.BackColor = back_color;
+                    children.ForeColor = fore_color;
                 }
             }
-            if (myControl is TextBox)
+            foreach (Control c in this.Controls)
             {
-                if (Projekt3.Properties.Settings.Default.Style == "Default")
+                UpdateColorControls(c);
+            }
+        }
+
+        private void UpdateColorControls(Control ui_element)
+        {
+            //Function to change GUI elements style
+            if (ui_element is Button || ui_element is TextBox)
+            {
+                if (AdvancedCalculatorGUI.Properties.Settings.Default.Style == "Default")
                 {
-                    myControl.BackColor = SystemColors.Control;
+                    ui_element.BackColor = System.Drawing.Color.Wheat;
+                    ui_element.ForeColor = SystemColors.ControlText;
                 }
-                else if (Projekt3.Properties.Settings.Default.Style == "Dark")
+                else if (AdvancedCalculatorGUI.Properties.Settings.Default.Style == "Dark")
                 {
-                    myControl.BackColor = SystemColors.ControlDark;
+                    ui_element.BackColor = SystemColors.GrayText;
+                    ui_element.ForeColor = SystemColors.MenuBar;
                 }
             }
 
-            foreach (Control subC in myControl.Controls)
+            foreach (Control subC in ui_element.Controls)
             {
                 UpdateColorControls(subC);
             }
         }
 
-        private int[] MsCoord(int Value, int hlen)
+        private void SetDigitalClock()
         {
-            //Function which calculates minute/second hand of a clock coordinates
-            int[] coord = new int[2];
-            Value = Value * 6;  
-
-            if (Value >= 0 && Value <= 180)
-            {
-                coord[0] = center_x + Convert.ToInt32((hlen * Math.Sin(Math.PI * Value / 180)));
-                coord[1] = center_y - Convert.ToInt32((hlen * Math.Cos(Math.PI * Value / 180)));
-            }
+            int hour = DateTime.Now.Hour, minute = DateTime.Now.Minute, second = DateTime.Now.Second;
+            string hour_string = "", minute_string = "", second_string = "";
+            labelTimer.Visible = true;
+            pictureBoxClock.Visible = false;
+            if (hour < 10)
+                hour_string += "0" + hour;
             else
-            {
-                coord[0] = center_x - Convert.ToInt32((hlen * -Math.Sin(Math.PI * Value / 180)));
-                coord[1] = center_y - Convert.ToInt32((hlen * Math.Cos(Math.PI * Value / 180)));
-            }
-            return coord;
+                hour_string += hour;
+            if (minute < 10)
+                minute_string += "0" + minute;
+            else
+                minute_string += minute;
+            if (second < 10)
+                second_string += "0" + second;
+            else
+                second_string += second;
+            labelTimer.Text = hour_string + ":" + minute_string + ":" + second_string;
         }
 
-        private int[] HrCoord(int H_Value, int M_Value, int hlen)
+        private void SetAnalogClock()
         {
-            //Function which calculates hour hand of a clock coordinates
-            int[] coord = new int[2];
-            int Value = Convert.ToInt32(( H_Value*30 + M_Value/2 ));
-
-            if (Value >= 0 && Value <= 180)
+            int hour = DateTime.Now.Hour, minute = DateTime.Now.Minute, second = DateTime.Now.Second, second_hand_len = 45, minute_hand_len = 35, hour_hand_len = 25;
+            int[] secCoord = new int[2], minCoord = new int[2], hourCoord = new int[2];
+            Bitmap clock_bitmap = new Bitmap(clock_width + 1, clock_height + 1);
+            Graphics clock_graphics = Graphics.FromImage(clock_bitmap);
+            Brush clock_brush = Brushes.Black;
+            Color clock_color = Color.Black;
+            if (AdvancedCalculatorGUI.Properties.Settings.Default.Style == "Dark")
             {
-                coord[0] = center_x + Convert.ToInt32((hlen * Math.Sin(Math.PI * Value / 180)));
-                coord[1] = center_y - Convert.ToInt32((hlen * Math.Cos(Math.PI * Value / 180)));
+                clock_brush = Brushes.White;
+                clock_color = Color.White;
+            }
+            labelTimer.Visible = false;
+            pictureBoxClock.Visible = true;
+
+            secCoord = HandOfClockCoord(MinuteSecondRadianTimeValue(second), second_hand_len);
+            minCoord = HandOfClockCoord(MinuteSecondRadianTimeValue(minute), minute_hand_len);
+            hourCoord = HandOfClockCoord(HourRadianTimeValue(hour, minute), hour_hand_len);
+
+
+            clock_graphics.Clear(this.BackColor);
+            clock_graphics.DrawEllipse(new Pen(clock_color, 2f), 0, 0, clock_width, clock_height);
+            clock_graphics.DrawString("12", new Font("Arial", 12, FontStyle.Bold), clock_brush, new PointF(39, 2));
+            clock_graphics.DrawString("3", new Font("Arial", 12, FontStyle.Bold), clock_brush, new PointF(86, 39));
+            clock_graphics.DrawString("6", new Font("Arial", 12, FontStyle.Bold), clock_brush, new PointF(43, 80));
+            clock_graphics.DrawString("9", new Font("Arial", 12, FontStyle.Bold), clock_brush, new PointF(0, 39));
+            clock_graphics.DrawLine(new Pen(Color.Red, 2f), new Point(center_x, center_y), new Point(secCoord[0], secCoord[1]));
+            clock_graphics.DrawLine(new Pen(Color.Gray, 3f), new Point(center_x, center_y), new Point(minCoord[0], minCoord[1]));
+            clock_graphics.DrawLine(new Pen(Color.Black, 4f), new Point(center_x, center_y), new Point(hourCoord[0], hourCoord[1]));
+            pictureBoxClock.Image = clock_bitmap;
+            clock_graphics.Dispose();
+        }
+
+        private int MinuteSecondRadianTimeValue (int time_value)
+        {
+            return time_value * 6;
+        }
+
+        private int HourRadianTimeValue(int hour, int minute)
+        {
+            return Convert.ToInt32((hour * 30 + minute / 2));
+        }
+
+        private int[] HandOfClockCoord(int radian_time_value, int time_hand_len)
+        {
+            //Function which calculates hands of a clock coordinates
+            int[] coord = new int[2];
+            if (radian_time_value >= 0 && radian_time_value <= 180)
+            {
+                coord[0] = center_x + Convert.ToInt32((time_hand_len * Math.Sin(Math.PI * radian_time_value / 180)));
+                coord[1] = center_y - Convert.ToInt32((time_hand_len * Math.Cos(Math.PI * radian_time_value / 180)));
             }
             else
             {
-                coord[0] = center_x - Convert.ToInt32((hlen * -Math.Sin(Math.PI * Value / 180)));
-                coord[1] = center_y - Convert.ToInt32((hlen * Math.Cos(Math.PI * Value / 180)));
+                coord[0] = center_x - Convert.ToInt32((time_hand_len * -Math.Sin(Math.PI * radian_time_value / 180)));
+                coord[1] = center_y - Convert.ToInt32((time_hand_len * Math.Cos(Math.PI * radian_time_value / 180)));
             }
             return coord;
         }
