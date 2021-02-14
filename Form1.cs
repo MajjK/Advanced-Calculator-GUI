@@ -2,10 +2,10 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace AdvancedCalculatorGUI
 {
-    // Dodanie Nawiasów
     // Dodanie wpisywania niewiadomej X, tworzenia wykresu na określonym przedziale
     // Całkowanie narysowanego przedziału
 
@@ -22,18 +22,17 @@ namespace AdvancedCalculatorGUI
             center_y = clock_height / 2;
         }
 
-        private void ActionButtonClicked(object sender, EventArgs e)
+        private void ProcessActionButton(object sender, EventArgs e)
         {
-            //Main function to process clicked buttons
             Button button = (Button)sender;
             string text_update = button.Text;
-            
-            if (double.TryParse(text_update, out _) || text_update == ".")
-            {
+
+            if (int.TryParse(text_update, out _) || text_update == ".")
                 UpdateDisplay(text_update);
-            }
+            else if (mainTextBox.Text.Length > 0 && mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1) == " ")
+                UpdateDisplay(text_update + " ");
             else
-                UpdateDisplay(" " + text_update + " ");     
+                UpdateDisplay(" " + text_update + " ");
         }
 
         private void UpdateDisplay(string update, Boolean replace = false)
@@ -45,52 +44,107 @@ namespace AdvancedCalculatorGUI
                 mainTextBox.Text += update;
         }
 
-        private void BackButtonClicked(object sender, EventArgs e)
+        private void ProcessBracketButton(object sender, EventArgs e)
         {
-            //Deleting last sign from textbox
+            string bracket = "(";
+            if (mainTextBox.Text.Length > 1)
+            {
+                int left_brackets = mainTextBox.Text.Count(x => x == '(');
+                int right_brackets = mainTextBox.Text.Count(x => x == ')');
+                string previous_char = mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1);
+                string previous_char2 = mainTextBox.Text.Substring(mainTextBox.Text.Length - 2, 1);
+                if (left_brackets > right_brackets && (int.TryParse(previous_char, out _) || previous_char2.Equals(")")))
+                    bracket = ")";
+            }
+
+            if (mainTextBox.Text.Length == 0 || mainTextBox.Text.Length > 0 && mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1) == " ")
+                UpdateDisplay(bracket + " ");
+            else
+                UpdateDisplay(" " + bracket + " ");
+        }
+
+        private void ProcessBackButton(object sender, EventArgs e)
+        {
             if (mainTextBox.Text.Length > 1)
             {
                 string char_to_delete = mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1);
                 string prev_char = mainTextBox.Text.Substring(mainTextBox.Text.Length - 2, 1);
                 if (Char.IsLetter(prev_char, 0))
-                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 5);
+                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 4);
                 else if (char_to_delete == " ")
                     mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 3);
                 else
                     mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 1);
 
             }
-            else if (mainTextBox.Text.Length == 1)
-                mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 1);
+            else
+                mainTextBox.Text = ""; 
         }
 
-        private void ClearButtonClicked(object sender, EventArgs e)
+        private void ProcessClearButton(object sender, EventArgs e)
         {
             mainTextBox.Text = "";
         }
 
-        private void CalcButtonClicked(object sender, EventArgs e)
+        private void ProcessCalcButton(object sender, EventArgs e)
         {
-            // Main function to compute operations from textbox
             String input = mainTextBox.Text;
-            if (input.Contains("^"))
-                input = this.CalculateAdvancedMath(input, "^");
-            if (input.Contains("√"))
-                input = this.CalculateAdvancedMath(input, "√");
-            if (input.Contains("log"))
-                input = this.CalculateAdvancedMath(input, "log");
-            if (input.Contains("sin"))
-                input = this.CalculateAdvancedMath(input, "sin");
-
+            
             try
             {
-                //var operation = new DataTable().Compute(input, null);
-                this.UpdateDisplay(Convert.ToString(input), true);
+                input = this.ProcessSpecialSigns(input);
+                var operation = new DataTable().Compute(input, null);
+                this.UpdateDisplay(Convert.ToString(operation), true);
             }
             catch (Exception error)
             {
                 MessageBox.Show("Syntax Error !");
             }
+        }
+
+        private string ProcessSpecialSigns(string equation)
+        {
+            if (equation.Contains("(") && equation.Contains(")"))
+                equation = this.CalculateBrackets(equation);
+            if (equation.Contains("^"))
+                equation = this.CalculateAdvancedMath(equation, "^");
+            if (equation.Contains("√"))
+                equation = this.CalculateAdvancedMath(equation, "√");
+            if (equation.Contains("log"))
+                equation = this.CalculateAdvancedMath(equation, "log");
+            if (equation.Contains("sin"))
+                equation = this.CalculateAdvancedMath(equation, "sin");
+            return equation;
+        }
+
+        private string CalculateBrackets(string equation)
+        {
+            int bracket_left_index = equation.IndexOf("("), bracket_right_index = equation.IndexOf(")");
+            int left_brackets_counter, right_brackets_counter;
+            string bracketed_equation;
+
+            while (bracket_left_index != -1)
+            {
+                left_brackets_counter = 0;
+                right_brackets_counter = 0;
+                for (int i = bracket_left_index; i < equation.Length; i++)
+                {
+                    if (mainTextBox.Text.Substring(i, 1) == "(")
+                        left_brackets_counter++;
+                    if (mainTextBox.Text.Substring(i, 1) == ")")
+                        right_brackets_counter++;
+                    if (left_brackets_counter == right_brackets_counter && mainTextBox.Text.Substring(i, 1) == ")")
+                        bracket_right_index = i;
+                }
+
+                bracketed_equation = equation.Substring(bracket_left_index + 2, bracket_right_index - bracket_left_index - 2);
+                bracketed_equation = this.ProcessSpecialSigns(bracketed_equation);
+                var value = new DataTable().Compute(bracketed_equation, null);
+                equation = equation.Remove(bracket_left_index, bracket_right_index - bracket_left_index + 1);
+                equation = equation.Insert(bracket_left_index, Convert.ToString(value));
+                bracket_left_index = equation.IndexOf("(");
+            }
+                return equation;
         }
 
         private string CalculateAdvancedMath(string equation, string operation)
@@ -101,7 +155,8 @@ namespace AdvancedCalculatorGUI
             while (operation_index != -1)
             {
                 basis = this.GetBasisValue(equation, operation_index - 2);
-                operand = this.GetOperandValue(equation, operation_index + 2);
+                operand = this.GetOperandValue(equation, operation_index + operation.Length + 1);
+                
                 if (operation == "^")
                     value = Math.Round(Math.Pow(basis, operand), 5);
                 else if (operation == "√")
@@ -113,24 +168,38 @@ namespace AdvancedCalculatorGUI
                 else if (operation == "sin")
                     value = Math.Round(Math.Sin(operand), 5);
 
-                equation = equation.Remove(operation_index - 1 - basis.ToString().Length,
-                                           basis.ToString().Length + operand.ToString().Length + 3);
-                equation = equation.Insert(operation_index - 1 - basis.ToString().Length,
-                                           value.ToString() + " ");
+                if (basis == 0)
+                {
+                    equation = equation.Remove(operation_index, operation.Length + operand.ToString().Length + 1);
+                    equation = equation.Insert(operation_index, value.ToString() + " ");
+                }
+                else
+                {
+                    equation = equation.Remove(operation_index - 1 - basis.ToString().Length,
+                                               basis.ToString().Length + operation.Length + operand.ToString().Length + 2);
+                    equation = equation.Insert(operation_index - 1 - basis.ToString().Length,
+                                               value.ToString() + " ");
+                }
                 operation_index = equation.IndexOf(operation);
             }
-            return equation;
+            return equation.Replace(@",", ".");
         }
 
         private double GetBasisValue(string operation, int string_index)
         {
             int i = 0;
-            if (!double.TryParse(operation.Substring(string_index - i, 1), out _))
+            string basis;
+            if (string_index < 0)
+                return 0;
+            else if (!double.TryParse(operation.Substring(string_index - i, 1), out _))
                 return 0;
             while (true)
             {
                 if (string_index - i == 0 || operation.Substring(string_index - i, 1) == " ")
-                    return Double.Parse(operation.Substring(string_index - i, i + 1));
+                {
+                    basis = operation.Substring(string_index - i, i + 1);
+                    return Double.Parse(basis.Replace(@".", ","));
+                }
                 else
                     i++;
             }
@@ -139,10 +208,14 @@ namespace AdvancedCalculatorGUI
         private double GetOperandValue(string operation, int string_index)
         {
             int i = 0;
+            string operand;
             while (true)
             {
                 if (string_index + i == operation.Length - 1 || operation.Substring(string_index + i, 1) == " ")
-                    return Double.Parse(operation.Substring(string_index, i + 1));
+                {
+                    operand = operation.Substring(string_index, i + 1);
+                    return Double.Parse(operand.Replace(@".", ","));
+                }
                 else
                     i++;
             }
@@ -216,9 +289,8 @@ namespace AdvancedCalculatorGUI
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void Timer1_Tick(object sender, EventArgs e)
+        private void ClockStyleUpdate(object sender, EventArgs e)
         {
-            //Function to create and update clock
             if ((string)styleComboBoxMenuStrip.SelectedItem == "Default Style")
             {
                 AdvancedCalculatorGUI.Properties.Settings.Default.Style = "Default";
@@ -263,7 +335,6 @@ namespace AdvancedCalculatorGUI
 
         private void UpdateColorControls(Control ui_element)
         {
-            //Function to change GUI elements style
             if (ui_element is Button || ui_element is TextBox)
             {
                 if (AdvancedCalculatorGUI.Properties.Settings.Default.Style == "Default")
@@ -321,9 +392,9 @@ namespace AdvancedCalculatorGUI
             labelTimer.Visible = false;
             pictureBoxClock.Visible = true;
 
-            secCoord = HandOfClockCoord(MinuteSecondRadianTimeValue(second), second_hand_len);
-            minCoord = HandOfClockCoord(MinuteSecondRadianTimeValue(minute), minute_hand_len);
-            hourCoord = HandOfClockCoord(HourRadianTimeValue(hour, minute), hour_hand_len);
+            secCoord = GetHandOfClockCoord(GetMinuteSecondRadianTimeValue(second), second_hand_len);
+            minCoord = GetHandOfClockCoord(GetMinuteSecondRadianTimeValue(minute), minute_hand_len);
+            hourCoord = GetHandOfClockCoord(GetHourRadianTimeValue(hour, minute), hour_hand_len);
 
 
             clock_graphics.Clear(this.BackColor);
@@ -339,19 +410,18 @@ namespace AdvancedCalculatorGUI
             clock_graphics.Dispose();
         }
 
-        private int MinuteSecondRadianTimeValue (int time_value)
+        private int GetMinuteSecondRadianTimeValue (int time_value)
         {
             return time_value * 6;
         }
 
-        private int HourRadianTimeValue(int hour, int minute)
+        private int GetHourRadianTimeValue(int hour, int minute)
         {
             return Convert.ToInt32((hour * 30 + minute / 2));
         }
 
-        private int[] HandOfClockCoord(int radian_time_value, int time_hand_len)
+        private int[] GetHandOfClockCoord(int radian_time_value, int time_hand_len)
         {
-            //Function which calculates hands of a clock coordinates
             int[] coord = new int[2];
             if (radian_time_value >= 0 && radian_time_value <= 180)
             {
