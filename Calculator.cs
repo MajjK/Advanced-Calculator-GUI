@@ -88,7 +88,7 @@ namespace AdvancedCalculatorGUI
             return equation.Replace(@",", ".");
         }
 
-        private double GetBasisValue(string operation, int string_index)
+        public double GetBasisValue(string operation, int string_index)
         {
             int i = 0;
             string basis;
@@ -108,7 +108,7 @@ namespace AdvancedCalculatorGUI
             }
         }
 
-        private double GetOperandValue(string operation, int string_index)
+        public double GetOperandValue(string operation, int string_index)
         {
             int i = 0;
             string operand;

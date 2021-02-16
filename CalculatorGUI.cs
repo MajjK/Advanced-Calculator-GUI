@@ -4,15 +4,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 
+
 namespace AdvancedCalculatorGUI
 {
-    // Dodanie wpisywania niewiadomej X, tworzenia wykresu na określonym przedziale
-    // Całkowanie narysowanego przedziału
 
     public partial class CalculatorGUI : Form
     {
         int clock_width = 100, clock_height = 100, center_x, center_y;
         Calculator calculatorSystem;
+        FunctionPlotWindow plotWindow;
 
         public CalculatorGUI()
         {
@@ -71,7 +71,7 @@ namespace AdvancedCalculatorGUI
             {
                 string char_to_delete = mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1);
                 string prev_char = mainTextBox.Text.Substring(mainTextBox.Text.Length - 2, 1);
-                if (Char.IsLetter(prev_char, 0))
+                if (Char.IsLetter(prev_char, 0) && prev_char != "X")
                     mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 4);
                 else if (char_to_delete == " ")
                     mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 3);
@@ -92,7 +92,6 @@ namespace AdvancedCalculatorGUI
         {      
             try
             {
-
                 string operation = calculatorSystem.ProcessSpecialSigns(mainTextBox.Text);
                 var result = new DataTable().Compute(operation, null);
                 this.UpdateDisplay(Convert.ToString(result), true);
@@ -103,6 +102,19 @@ namespace AdvancedCalculatorGUI
             }
         }
 
+        private void ProcessDrawButton(object sender, EventArgs e)
+        {
+            try
+            {
+                plotWindow = new FunctionPlotWindow(mainTextBox.Text, double.Parse(startTextBoxToolStrip.Text), double.Parse(stopTextBoxToolStrip.Text),
+                                                    double.Parse(stepTextBoxToolStrip.Text.Replace(@".", ",")), (string)styleComboBoxMenuStrip.SelectedItem);
+                plotWindow.Show();
+            }
+            catch
+            {
+                MessageBox.Show("Syntex Error in Plot Settings !");
+            }
+        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -187,6 +199,8 @@ namespace AdvancedCalculatorGUI
                 this.SetDigitalClock();
             if ((string)clockComboBoxMenuStrip.SelectedItem == "Analog Clock")
                 this.SetAnalogClock();
+            if (Application.OpenForms.Count > 1)
+                plotWindow.UpdateGraphStyle((string)styleComboBoxMenuStrip.SelectedItem);
         }
 
         private void SetStyle(Color back_color, Color fore_color)
@@ -194,11 +208,8 @@ namespace AdvancedCalculatorGUI
             this.BackColor = back_color;
             this.pictureBoxClock.BackColor = back_color;
             this.menuStrip.BackColor = back_color;
-            this.styleComboBoxMenuStrip.BackColor = back_color;
-            this.clockComboBoxMenuStrip.BackColor = back_color;
-            this.styleComboBoxMenuStrip.ForeColor = fore_color;
-            this.clockComboBoxMenuStrip.ForeColor = fore_color;
             this.labelTimer.ForeColor = fore_color;
+              
             foreach (ToolStripMenuItem item in menuStrip.Items)
             {
                 item.BackColor = back_color;
@@ -209,11 +220,27 @@ namespace AdvancedCalculatorGUI
                     children.ForeColor = fore_color;
                 }
             }
+            foreach (ToolStripComboBox item in styleToolStripMenuStrip.DropDownItems)
+            {
+                item.BackColor = back_color;
+                item.ForeColor = fore_color;
+            }
+            foreach (ToolStripMenuItem item in settingsToolStripMenuStrip.DropDownItems)
+            {
+                item.BackColor = back_color;
+                item.ForeColor = fore_color;
+                foreach (ToolStripTextBox children in item.DropDownItems)
+                {
+                    children.BackColor = back_color;
+                    children.ForeColor = fore_color;
+                }
+            }
             foreach (Control c in this.Controls)
             {
                 UpdateColorControls(c);
             }
         }
+
 
         private void UpdateColorControls(Control ui_element)
         {
