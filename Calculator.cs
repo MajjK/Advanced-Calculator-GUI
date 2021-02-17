@@ -64,14 +64,14 @@ namespace AdvancedCalculatorGUI
                     value = Math.Round(Math.Pow(basis, operand), 5);
                 else if (operation == "√")
                     value = Math.Round(Math.Sqrt(operand), 5);
-                else if (operation == "log" && basis == 0)
+                else if (operation == "log" && basis == 1)
                     value = Math.Round(Math.Log(operand), 5);
-                else if (operation == "log" && basis != 0)
+                else if (operation == "log" && basis != 1)
                     value = Math.Round(Math.Log(operand, basis), 5);
                 else if (operation == "sin")
                     value = Math.Round(Math.Sin(operand), 5);
 
-                if (basis == 0)
+                if (basis == 1)
                 {
                     equation = equation.Remove(operation_index, operation.Length + operand.ToString().Length + 1);
                     equation = equation.Insert(operation_index, value.ToString() + " ");
@@ -93,9 +93,9 @@ namespace AdvancedCalculatorGUI
             int i = 0;
             string basis;
             if (string_index < 0)
-                return 0;
+                return 1;
             else if (!double.TryParse(operation.Substring(string_index - i, 1), out _))
-                return 0;
+                return 1;
             while (true)
             {
                 if (string_index - i == 0 || operation.Substring(string_index - i, 1) == " ")

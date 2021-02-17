@@ -7,21 +7,22 @@ using System.Linq;
 
 namespace AdvancedCalculatorGUI
 {
-
     public partial class CalculatorGUI : Form
     {
         int clock_width = 100, clock_height = 100, center_x, center_y;
+        string current_operation;
         Calculator calculatorSystem;
         FunctionPlotWindow plotWindow;
 
         public CalculatorGUI()
         {
             InitializeComponent();
-            calculatorSystem = new Calculator();
+            this.calculatorSystem = new Calculator();
+            this.current_operation = mainTextBox.Text;
+            this.center_x = clock_width / 2;
+            this.center_y = clock_height / 2;
             styleComboBoxMenuStrip.SelectedItem = "Default Style";
             clockComboBoxMenuStrip.SelectedItem = "Digital Clock";
-            center_x = clock_width / 2;
-            center_y = clock_height / 2;
         }
 
         private void ProcessActionButton(object sender, EventArgs e)
@@ -34,7 +35,7 @@ namespace AdvancedCalculatorGUI
             else if (mainTextBox.Text.Length > 0 && mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1) == " ")
                 UpdateDisplay(text_update + " ");
             else
-                UpdateDisplay(" " + text_update + " ");
+                UpdateDisplay(" " + text_update + " ");           
         }
 
         private void UpdateDisplay(string update, Boolean replace = false)
@@ -44,6 +45,15 @@ namespace AdvancedCalculatorGUI
             
             else
                 mainTextBox.Text += update;
+            UpdateCurrentOperation();
+        }
+
+        private void UpdateCurrentOperation()
+        {
+            if (mainTextBox.Text.Contains("="))
+                current_operation = mainTextBox.Text.Substring(mainTextBox.Text.LastIndexOf("=") + 2);
+            else
+                current_operation = mainTextBox.Text;
         }
 
         private void ProcessBracketButton(object sender, EventArgs e)
@@ -92,9 +102,9 @@ namespace AdvancedCalculatorGUI
         {      
             try
             {
-                string operation = calculatorSystem.ProcessSpecialSigns(mainTextBox.Text);
+                string operation = calculatorSystem.ProcessSpecialSigns(current_operation);
                 var result = new DataTable().Compute(operation, null);
-                this.UpdateDisplay(Convert.ToString(result), true);
+                UpdateDisplay(" = " + Convert.ToString(result), false);
             }
             catch (Exception error)
             {
@@ -106,12 +116,12 @@ namespace AdvancedCalculatorGUI
         {
             try
             {
-                plotWindow = new FunctionPlotWindow(mainTextBox.Text, double.Parse(startTextBoxToolStrip.Text), double.Parse(stopTextBoxToolStrip.Text),
+                this.plotWindow = new FunctionPlotWindow(current_operation, double.Parse(startTextBoxToolStrip.Text), double.Parse(stopTextBoxToolStrip.Text),
                                                     double.Parse(stepTextBoxToolStrip.Text.Replace(@".", ",")), (string)styleComboBoxMenuStrip.SelectedItem);
-                plotWindow.Show();
+                this.plotWindow.Show();
             }
             catch
-            {
+            {              
                 MessageBox.Show("Syntex Error in Plot Settings !");
             }
         }
@@ -121,61 +131,61 @@ namespace AdvancedCalculatorGUI
             switch(keyData)
             {
                 case Keys.NumPad0:
-                    this.button0.PerformClick();
+                    button0.PerformClick();
                     break;
                 case Keys.NumPad1:
-                    this.button1.PerformClick();
+                    button1.PerformClick();
                     break;
                 case Keys.NumPad2:
-                    this.button2.PerformClick();
+                    button2.PerformClick();
                     break;
                 case Keys.NumPad3:
-                    this.button3.PerformClick();
+                    button3.PerformClick();
                     break;
                 case Keys.NumPad4:
-                    this.button4.PerformClick();
+                    button4.PerformClick();
                     break;
                 case Keys.NumPad5:
-                    this.button5.PerformClick();
+                    button5.PerformClick();
                     break;
                 case Keys.NumPad6:
-                    this.button6.PerformClick();
+                    button6.PerformClick();
                     break;
                 case Keys.NumPad7:
-                    this.button7.PerformClick();
+                    button7.PerformClick();
                     break;
                 case Keys.NumPad8:
-                    this.button8.PerformClick();
+                    button8.PerformClick();
                     break;
                 case Keys.NumPad9:
-                    this.button9.PerformClick();
+                    button9.PerformClick();
                     break;
                 case Keys.Decimal:
-                    this.buttonDot.PerformClick();
+                    buttonDot.PerformClick();
                     break;
                 case Keys.Multiply:
-                    this.buttonMult.PerformClick();
+                    buttonMult.PerformClick();
                     break;
                 case Keys.Divide:
-                    this.buttonDiv.PerformClick();
+                    buttonDiv.PerformClick();
                     break;
                 case Keys.Add:
-                    this.buttonAdd.PerformClick();
+                    buttonAdd.PerformClick();
                     break;
                 case Keys.Subtract:
-                    this.buttonSub.PerformClick();
+                    buttonSub.PerformClick();
                     break;
                 case Keys.D5 | Keys.Shift:
-                    this.buttonMod.PerformClick();
+                    buttonMod.PerformClick();
                     break;
                 case Keys.Back:
-                    this.buttonBack.PerformClick();
+                    buttonBack.PerformClick();
                     break;
                 case Keys.Delete:
-                    this.buttonClear.PerformClick();
+                    buttonClear.PerformClick();
                     break;
                 case Keys.Enter:
-                    this.buttonCalc.PerformClick();
+                    buttonCalc.PerformClick();
                     break;
                 default:
                     break;
@@ -188,27 +198,27 @@ namespace AdvancedCalculatorGUI
             if ((string)styleComboBoxMenuStrip.SelectedItem == "Default Style")
             {
                 AdvancedCalculatorGUI.Properties.Settings.Default.Style = "Default";
-                this.SetStyle(SystemColors.Info, SystemColors.WindowText);
+                SetStyle(SystemColors.Info, SystemColors.WindowText);
             }
             if ((string)styleComboBoxMenuStrip.SelectedItem == "Dark Style")
             {
                 AdvancedCalculatorGUI.Properties.Settings.Default.Style = "Dark";
-                this.SetStyle(System.Drawing.Color.FromArgb((int)((byte)(64)), (int)((byte)(64)), (int)(byte)(64)), SystemColors.MenuBar);
+                SetStyle(System.Drawing.Color.FromArgb((int)((byte)(64)), (int)((byte)(64)), (int)(byte)(64)), SystemColors.MenuBar);
             }
             if ((string)clockComboBoxMenuStrip.SelectedItem == "Digital Clock")
-                this.SetDigitalClock();
+                SetDigitalClock();
             if ((string)clockComboBoxMenuStrip.SelectedItem == "Analog Clock")
-                this.SetAnalogClock();
+                SetAnalogClock();
             if (Application.OpenForms.Count > 1)
-                plotWindow.UpdateGraphStyle((string)styleComboBoxMenuStrip.SelectedItem);
+                this.plotWindow.UpdateGraphStyle((string)styleComboBoxMenuStrip.SelectedItem);
         }
 
         private void SetStyle(Color back_color, Color fore_color)
         {
             this.BackColor = back_color;
-            this.pictureBoxClock.BackColor = back_color;
-            this.menuStrip.BackColor = back_color;
-            this.labelTimer.ForeColor = fore_color;
+            pictureBoxClock.BackColor = back_color;
+            menuStrip.BackColor = back_color;
+            labelTimer.ForeColor = fore_color;
               
             foreach (ToolStripMenuItem item in menuStrip.Items)
             {
@@ -220,11 +230,6 @@ namespace AdvancedCalculatorGUI
                     children.ForeColor = fore_color;
                 }
             }
-            foreach (ToolStripComboBox item in styleToolStripMenuStrip.DropDownItems)
-            {
-                item.BackColor = back_color;
-                item.ForeColor = fore_color;
-            }
             foreach (ToolStripMenuItem item in settingsToolStripMenuStrip.DropDownItems)
             {
                 item.BackColor = back_color;
@@ -234,6 +239,11 @@ namespace AdvancedCalculatorGUI
                     children.BackColor = back_color;
                     children.ForeColor = fore_color;
                 }
+            }
+            foreach (ToolStripComboBox item in styleToolStripMenuStrip.DropDownItems)
+            {
+                item.BackColor = back_color;
+                item.ForeColor = fore_color;
             }
             foreach (Control c in this.Controls)
             {
@@ -257,7 +267,6 @@ namespace AdvancedCalculatorGUI
                     ui_element.ForeColor = SystemColors.MenuBar;
                 }
             }
-
             foreach (Control subC in ui_element.Controls)
             {
                 UpdateColorControls(subC);
