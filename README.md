@@ -15,6 +15,7 @@ The project is an advanced graphing calculator with customizable graphic interfa
 <p align="center"> 
 <img src="./img/graph.png">
 </p>
+
 ## Technologies used
 * C# - Main language.
 * Windows Forms - Free, open-source framework for creating graphical applications(GUI).
