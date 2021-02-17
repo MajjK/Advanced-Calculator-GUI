@@ -37,11 +37,15 @@ namespace AdvancedCalculatorGUI
                     if (equation.Substring(i, 1) == ")")
                         right_brackets_counter++;
                     if (left_brackets_counter == right_brackets_counter && equation.Substring(i, 1) == ")")
+                    {
                         bracket_right_index = i;
+                        break;
+                    }
                 }
 
                 bracketed_equation = equation.Substring(bracket_left_index + 2, bracket_right_index - bracket_left_index - 2);
                 bracketed_equation = this.ProcessSpecialSigns(bracketed_equation);
+
                 var value = new DataTable().Compute(bracketed_equation, null);
                 equation = equation.Remove(bracket_left_index, bracket_right_index - bracket_left_index + 1);
                 equation = equation.Insert(bracket_left_index, Convert.ToString(value));
