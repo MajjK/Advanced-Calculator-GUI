@@ -7,13 +7,17 @@ The project is an advanced graphing calculator with customizable graphic interfa
 <p align="center"> 
 <img src="./img/calc_default.png">
 </p>
-<div align="center"> Calculator changed style: </div>
+<div align="center"> Calculator Dark Style: </div>
 <p align="center"> 
 <img src="./img/calc_dark.png">
 </p>
-<div align="center"> Function graph: </div>
+<div align="center"> Function Graph: </div>
 <p align="center"> 
-<img src="./img/graph.png">
+<img src="./img/graph_default.png">
+</p>
+<div align="center"> Function Graph Dark Style: </div>
+<p align="center"> 
+<img src="./img/graph_dark.png">
 </p>
 
 ## Technologies used
