@@ -32,7 +32,7 @@ namespace AdvancedCalculatorGUI
 
             if (int.TryParse(text_update, out _) || text_update == ".")
                 UpdateDisplay(text_update);
-            else if (mainTextBox.Text.Length > 0 && mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1) == " ")
+            else if (mainTextBox.Text.Length > 0 && mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1) == " " || mainTextBox.Text.Length == 0)
                 UpdateDisplay(text_update + " ");
             else
                 UpdateDisplay(" " + text_update + " ");           
@@ -82,12 +82,23 @@ namespace AdvancedCalculatorGUI
                 string char_to_delete = mainTextBox.Text.Substring(mainTextBox.Text.Length - 1, 1);
                 string prev_char = mainTextBox.Text.Substring(mainTextBox.Text.Length - 2, 1);
                 if (Char.IsLetter(prev_char, 0) && prev_char != "X")
-                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 4);
+                {
+                    if (mainTextBox.Text.Length > 4)
+                        mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 5);
+                    else
+                        mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 4);
+                }
                 else if (char_to_delete == " ")
-                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 3);
+                {
+                    if (mainTextBox.Text.Length > 2)
+                        mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 3);
+                    else
+                        mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 2);
+                }
+                else if (! int.TryParse(char_to_delete, out _) && char_to_delete != ".")
+                    mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 2);
                 else
                     mainTextBox.Text = mainTextBox.Text.Substring(0, mainTextBox.Text.Length - 1);
-
             }
             else
                 mainTextBox.Text = ""; 
