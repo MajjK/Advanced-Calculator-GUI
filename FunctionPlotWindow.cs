@@ -80,15 +80,15 @@ namespace AdvancedCalculatorGUI
             List<string> components = PreProcessFormula(calculator, function_formula);
             List<double> domain_exceptions = CheckDomain(components);
             string operation, sign;
-            int x_index, x_power;
-            double multiplication;
+            int x_index;
+            double multiplication, power;
  
             for (int i = 0; i < components.Count; i++) 
             {
                 operation = "";
                 sign = "+";
                 x_index = components[i].IndexOf("X");
-                x_power = 1;
+                power = 1;
                 multiplication = 1;
 
                 if (x_index == -1)
@@ -101,8 +101,8 @@ namespace AdvancedCalculatorGUI
                 {
                     if (components[i].Substring(x_index + 1, 1) == "^")
                     {
-                        operation = "^";
-                        x_power = (int)calculator.GetOperandValue(components[i], x_index + 2);
+                        operation = "x^";
+                        power = calculator.GetOperandValue(components[i], x_index + 2);
                     }
                     else if (components[i].Substring(x_index + 1, 1) == "/")
                     {
@@ -119,6 +119,16 @@ namespace AdvancedCalculatorGUI
                     {
                         operation = "/";
                         multiplication *= calculator.GetBasisValue(components[i], x_index - 2);
+                    }
+                    else if (components[i].Substring(x_index - 1, 1) == "^")
+                    {
+                        operation = "^x";
+                        power = calculator.GetBasisValue(components[i], x_index - 2);
+                        if (power < 0)
+                        {
+                            sign = "-";
+                            power *= -1;
+                        }
                     }
                     else if (components[i].Substring(x_index - 1, 1) == "√")
                     {
@@ -152,7 +162,7 @@ namespace AdvancedCalculatorGUI
                         }
                     }
                 }
-                components_values.Add(GetComponentData(domain_exceptions, operation, sign, x_power, multiplication));           
+                components_values.Add(GetComponentData(domain_exceptions, operation, sign, power, multiplication));           
             }
             return components_values;
         }
@@ -169,7 +179,7 @@ namespace AdvancedCalculatorGUI
             return data;
         }
 
-        private List<double> GetComponentData(List<double> exceptions, string operation, string sign, int power, double multiplication)
+        private List<double> GetComponentData(List<double> exceptions, string operation, string sign, double power, double multiplication)
         {
             List<double> data = new List<double>();
 
@@ -178,8 +188,10 @@ namespace AdvancedCalculatorGUI
                 if (exceptions.Contains(Math.Round(x, 5)))
                     continue;
                 double value = x;
-                if (operation == "^")
+                if (operation == "x^")
                     value = Math.Pow(value, power);
+                if (operation == "^x")
+                    value = Math.Pow(power, value);
                 if (operation == "√")
                     value = Math.Sqrt(x);
                 if (operation == "sin")
@@ -218,7 +230,7 @@ namespace AdvancedCalculatorGUI
             List<double> exceptions = new List<double>();
             for (int i = 0; i < formula_components.Count; i++)
             {
-                if (formula_components[i].Contains("log") || formula_components[i].Contains("√"))
+                if (formula_components[i].Contains("log") || formula_components[i].Contains("√") || formula_components.Contains("^0."))
                 {
                     start_t = 0;
                 }
